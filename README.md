@@ -1,3 +1,35 @@
+# Longevity Research Agent
+
+**Agentic AI track winner, Berlin Bio × AI Hackathon, 24 hours, 27–28 Feb 2026.** Five-person DeltaWave × nanoSpec team.
+
+Ask a longevity question. The agent searches the literature, runs code, and returns an evidence report graded by study type.
+
+## What you see
+
+1. Type a question, for example "epigenetic reprogramming".
+2. The **worklog** streams live: thoughts, tool calls (PubMed, trials, a biomedical knowledge graph), code and its output.
+3. The **answer** stays apart: an evidence pyramid, from meta-analyses to cell studies, with flags on weak evidence. Example: `report.md`.
+
+## How it was built
+
+I designed the event stream and the tool registry; coding agents implemented them under `AGENTS.md`. I checked runs against the per-run logs in `backend/logs/`.
+
+## Run it
+
+```bash
+git clone https://github.com/AmT42/longevity-research-agent.git && cd longevity-research-agent
+cp backend/.env.example backend/.env    # set GEMINI_API_KEY; set ENABLE_KG_TOOLS=false to skip the knowledge graph
+cd backend && python -m venv .venv && source .venv/bin/activate && pip install -e '.[dev]'
+uvicorn app.main:app --port 8000
+```
+
+In a second terminal: `cd frontend && npm install && NEXT_PUBLIC_BACKEND_URL=http://localhost:8000 npm run dev`. The Neo4j knowledge graph setup is in the original README below.
+
+---
+
+<details>
+<summary>Original README</summary>
+
 # Hackathon Agent Core
 
 Minimal Gemini-first chat stack with:
@@ -185,3 +217,5 @@ Each `./backend/scripts/eve-up.sh` run creates:
 - `GEMINI_REPLAY_SIGNATURE_MODE` controls replay behavior when Gemini history is missing a required leading `thought_signature` (`strict` default: downgrade that historical step to text fallback; `placeholder`: inject compatibility placeholder signature).
 - Gemini requests use Google GenAI SDK streaming with thought-signature-aware tool replay.
 - If Gemini model naming fails (404 model not found), switch `GEMINI_MODEL` to a supported model for your key/project (for example `gemini/gemini-3-pro` or `gemini/gemini-3-flash`).
+
+</details>
